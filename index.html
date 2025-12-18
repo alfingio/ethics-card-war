@@ -1,0 +1,1610 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Ethics Card War — Enhanced Demo</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  :root {
+    --bg: #0a0f2b;
+    --bg-gradient: linear-gradient(135deg, #0a0f2b 0%, #15203d 100%);
+    --card-back: #1c274f;
+    --accent: #ffd166;
+    --accent-glow: rgba(255, 209, 102, 0.3);
+    --easy-bg: linear-gradient(135deg, #1a76d2, #0d47a1);
+    --medium-bg: linear-gradient(135deg, #ff8a00, #e65100);
+    --bonus-bg: linear-gradient(135deg, #9c27b0, #6a1b9a);
+    --easy-color: #64b5f6;
+    --medium-color: #ffb74d;
+    --bonus-color: #ce93d8;
+    --card-width: 180px; /* Lebar ditingkatkan */
+    --card-height: 250px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --success: #4CAF50;
+    --error: #f44336;
+    --warning: #ff9800;
+    --info: #2196F3;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html, body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg-gradient);
+    color: #e3e9ff;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+      radial-gradient(circle at 20% 30%, rgba(26, 118, 210, 0.2) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(255, 209, 102, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 40% 80%, rgba(156, 39, 176, 0.15) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .app {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 30px 25px;
+    position: relative;
+  }
+
+  /* Enhanced Header */
+  header {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid var(--glass-border);
+    position: relative;
+    backdrop-filter: blur(10px);
+    background: var(--glass-bg);
+    border-radius: 20px;
+    padding: 25px 30px;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 150px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), #ff8a00, transparent);
+    border-radius: 3px;
+  }
+
+  .title {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+
+  .logo {
+    width: 70px;
+    height: 70px;
+    border-radius: 15px;
+    background: linear-gradient(135deg, #1a76d2, #0d47a1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 
+      0 10px 40px rgba(26, 118, 210, 0.4),
+      0 0 0 1px rgba(255, 255, 255, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    font-weight: 900;
+    font-size: 28px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition);
+  }
+
+  .logo:hover {
+    transform: rotate(5deg) scale(1.05);
+  }
+
+  .logo::before {
+    content: '🎮';
+    position: absolute;
+    opacity: 0.8;
+  }
+
+  .logo::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    animation: shine 3s infinite;
+  }
+
+  @keyframes shine {
+    0% { left: -100%; }
+    100% { left: 100%; }
+  }
+
+  .title-text {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  h1 {
+    font-size: 28px;
+    margin: 0;
+    background: linear-gradient(90deg, #fff, var(--accent), #ff8a00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  }
+
+  .lead {
+    margin: 0;
+    color: #cfe6ff;
+    opacity: 0.9;
+    font-size: 15px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .lead i {
+    color: var(--accent);
+  }
+
+  /* Enhanced Controls */
+  .controls {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    background: linear-gradient(135deg, #1a76d2, #0d47a1);
+    color: white;
+    padding: 14px 24px;
+    border-radius: 12px;
+    border: 0;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 15px;
+    box-shadow: 
+      0 6px 20px rgba(26, 118, 210, 0.4),
+      0 0 0 1px rgba(255, 255, 255, 0.08);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    letter-spacing: 0.3px;
+  }
+
+  .btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.6s;
+  }
+
+  .btn:hover::before {
+    transform: translateX(100%);
+  }
+
+  .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 
+      0 12px 25px rgba(26, 118, 210, 0.5),
+      0 0 0 1px rgba(255, 255, 255, 0.12);
+  }
+
+  .btn:active {
+    transform: translateY(0);
+  }
+
+  .btn-secondary {
+    background: linear-gradient(135deg, #424242, #212121);
+  }
+
+  .btn-secondary:hover {
+    background: linear-gradient(135deg, #4a4a4a, #2a2a2a);
+  }
+
+  .btn-warning {
+    background: linear-gradient(135deg, #ff9800, #f57c00);
+  }
+
+  .btn-warning:hover {
+    background: linear-gradient(135deg, #ffa726, #f57c00);
+  }
+
+  /* Enhanced Main Board */
+  .board {
+    background: linear-gradient(135deg, 
+      rgba(255, 255, 255, 0.05) 0%, 
+      rgba(0, 0, 0, 0.1) 100%);
+    padding: 30px;
+    border-radius: 20px;
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(15px);
+    box-shadow: 
+      0 12px 40px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    margin-bottom: 30px;
+  }
+
+  /* Enhanced Status Bar */
+  .status {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    padding: 20px 25px;
+    background: var(--glass-bg);
+    border-radius: 15px;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .status-info {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .status-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .status-label {
+    font-size: 13px;
+    color: #8bb9ff;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .status-label i {
+    font-size: 16px;
+    color: var(--accent);
+  }
+
+  .status-value {
+    font-size: 32px;
+    font-weight: 900;
+    color: white;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  #currentPlayer {
+    color: var(--accent);
+    text-shadow: 0 0 30px var(--accent-glow);
+    position: relative;
+  }
+
+  #currentPlayer::after {
+    content: '⚡';
+    position: absolute;
+    right: -25px;
+    top: 50%;
+    transform: translateY(-50%);
+    animation: pulse 1.5s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { 
+      opacity: 1;
+      transform: translateY(-50%) scale(1);
+    }
+    50% { 
+      opacity: 0.6;
+      transform: translateY(-50%) scale(1.2);
+    }
+  }
+
+  /* Enhanced Players Scoreboard */
+  .players {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 15px;
+    margin-bottom: 40px;
+  }
+
+  .player {
+    padding: 20px;
+    border-radius: 15px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .player::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, 
+      rgba(255, 255, 255, 0.03) 0%, 
+      rgba(255, 255, 255, 0.01) 100%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .player:hover::before {
+    opacity: 1;
+  }
+
+  .player.active {
+    background: linear-gradient(135deg, 
+      rgba(255, 209, 102, 0.15) 0%, 
+      rgba(255, 209, 102, 0.08) 100%);
+    border: 1px solid rgba(255, 209, 102, 0.3);
+    box-shadow: 
+      0 10px 30px rgba(255, 209, 102, 0.15),
+      0 0 0 1px rgba(255, 209, 102, 0.2);
+    transform: translateY(-5px);
+  }
+
+  .player.active::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--accent), #ff8a00);
+    border-radius: 4px 0 0 4px;
+  }
+
+  .player .name {
+    font-weight: 800;
+    font-size: 15px;
+    color: #e6f2ff;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+  }
+
+  .player.active .name::after {
+    content: 'TURN';
+    font-size: 10px;
+    background: var(--accent);
+    color: #000;
+    padding: 3px 8px;
+    border-radius: 10px;
+    margin-left: auto;
+    font-weight: 900;
+    animation: blink 2s infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+
+  .player .score {
+    font-size: 36px;
+    font-weight: 900;
+    color: white;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+    position: relative;
+  }
+
+  .player .score::after {
+    content: 'points';
+    position: absolute;
+    bottom: -5px;
+    right: 0;
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* Enhanced Card Row */
+  .card-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(var(--card-width), 1fr));
+    gap: 25px;
+    justify-content: center;
+    padding: 25px 0;
+    min-height: 300px;
+    position: relative;
+  }
+
+  /* Enhanced Cards - DIUBAH UNTUK FOTO */
+  .card {
+    width: var(--card-width);
+    height: var(--card-height);
+    border-radius: 18px;
+    position: relative;
+    cursor: pointer;
+    perspective: 1200px;
+    transform-style: preserve-3d;
+    transition: var(--transition);
+    filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.3));
+  }
+
+  .card:hover:not(.used):not(.busy) {
+    transform: translateY(-10px) scale(1.05);
+    filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.4));
+  }
+
+  .card.busy {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  .card.used {
+    cursor: not-allowed;
+    opacity: 0.4;
+    transform: scale(0.95);
+  }
+
+  .card.revealed .card-inner {
+    transform: rotateY(180deg);
+  }
+
+  .card-inner {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 18px;
+    transform-style: preserve-3d;
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Enhanced Card Faces - DIUBAH UNTUK FOTO */
+  .face {
+    backface-visibility: hidden;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 18px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 25px;
+    box-sizing: border-box;
+  }
+
+  /* Front Face - Enhanced */
+  .face.front {
+    background: linear-gradient(135deg, var(--card-back), #142248);
+    border: 2px solid rgba(255, 255, 255, 0.12);
+    color: #e3f2ff;
+    text-align: center;
+    gap: 15px;
+    box-shadow: 
+      inset 0 1px 0 rgba(255, 255, 255, 0.15),
+      0 10px 30px rgba(0, 0, 0, 0.3);
+  }
+
+  .face.front::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+      radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 70% 70%, rgba(255, 255, 255, 0.03) 0%, transparent 50%);
+    opacity: 0.5;
+  }
+
+  .front-icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+    opacity: 0.9;
+  }
+
+  .card.easy .front-icon { color: var(--easy-color); }
+  .card.medium .front-icon { color: var(--medium-color); }
+  .card.bonus .front-icon { color: var(--bonus-color); }
+
+  .front-text {
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: 0.5px;
+    margin-bottom: 5px;
+  }
+
+  .front-subtext {
+    font-size: 12px;
+    opacity: 0.8;
+    font-weight: 500;
+  }
+
+  /* Back Face - DIUBAH UNTUK FOTO YANG PAS */
+  .face.back {
+    transform: rotateY(180deg);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    border: 2px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 
+      0 15px 35px rgba(0, 0, 0, 0.4),
+      0 0 0 1px rgba(0, 0, 0, 0.15);
+    position: relative;
+  }
+
+  /* Overlay untuk meningkatkan kontras label */
+  .card-label-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, 
+      rgba(0, 0, 0, 0.3) 0%, 
+      rgba(0, 0, 0, 0.2) 100%);
+    border-radius: 18px;
+    z-index: 1;
+  }
+
+  /* Card Types - background untuk fallback */
+  .card.easy .face.back {
+    background-color: #1a76d2;
+  }
+
+  .card.medium .face.back {
+    background-color: #ff8a00;
+  }
+
+  .card.bonus .face.back {
+    background-color: #9c27b0;
+  }
+
+  /* Enhanced Card Labels - POSISI DIATAS FOTO */
+  .card-label {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    font-weight: 900;
+    font-size: 13px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    display: inline-block;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    z-index: 2;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .card.easy .card-label {
+    background: linear-gradient(135deg, var(--easy-color), #0b62a7);
+    color: white;
+  }
+
+  .card.medium .card-label {
+    background: linear-gradient(135deg, var(--medium-color), #f08a1f);
+    color: white;
+  }
+
+  .card.bonus .card-label {
+    background: linear-gradient(135deg, var(--bonus-color), #8b5cf6);
+    color: white;
+    animation: glow 2s infinite alternate;
+  }
+
+  @keyframes glow {
+    from { box-shadow: 0 4px 15px rgba(206, 147, 216, 0.5); }
+    to { box-shadow: 0 4px 20px rgba(206, 147, 216, 0.8); }
+  }
+
+  /* Enhanced Bonus Card Effects */
+  .holo {
+    position: absolute;
+    inset: 0;
+    border-radius: 18px;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+    opacity: 0.8;
+    background: linear-gradient(
+      45deg,
+      rgba(255, 0, 128, 0.4),
+      rgba(0, 255, 200, 0.4),
+      rgba(255, 240, 50, 0.4),
+      rgba(120, 0, 255, 0.4)
+    );
+    background-size: 300% 300%;
+    animation: holo-sheen 4s linear infinite;
+    filter: blur(1px);
+    z-index: 1;
+  }
+
+  @keyframes holo-sheen {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Enhanced Sparkles */
+  .sparkles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 3;
+  }
+
+  .sparkles i {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: white;
+    opacity: 0;
+    animation: sparkle 1.5s ease-out forwards;
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.9);
+  }
+
+  @keyframes sparkle {
+    0% { 
+      opacity: 0;
+      transform: scale(0.3) translateY(15px);
+    }
+    20% { 
+      opacity: 1;
+      transform: scale(1.2) translateY(-15px);
+    }
+    100% { 
+      opacity: 0;
+      transform: scale(0.8) translateY(-80px);
+    }
+  }
+
+  /* Enhanced Footer */
+  footer {
+    margin-top: 40px;
+    padding-top: 25px;
+    border-top: 1px solid var(--glass-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    color: #8bb9ff;
+    padding: 20px;
+    background: var(--glass-bg);
+    border-radius: 15px;
+    border: 1px solid var(--glass-border);
+  }
+
+  .tip {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, 
+      rgba(255, 209, 102, 0.15), 
+      rgba(255, 209, 102, 0.05));
+    border-radius: 12px;
+    border: 1px solid rgba(255, 209, 102, 0.25);
+    font-weight: 600;
+    max-width: 600px;
+  }
+
+  .tip i {
+    color: var(--accent);
+    font-size: 18px;
+  }
+
+  .version {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+  }
+
+  /* Enhanced Modal */
+  #quizModal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(10, 15, 43, 0.95);
+    backdrop-filter: blur(20px);
+  }
+
+  .modal-content {
+    background: linear-gradient(135deg, #ffffff, #f8faff);
+    color: #000000;
+    border-radius: 25px;
+    max-width: 600px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 
+      0 30px 60px rgba(0, 0, 0, 0.6),
+      0 0 0 1px rgba(255, 255, 255, 0.15);
+    padding: 35px;
+    position: relative;
+    animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  @keyframes modalSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-40px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  #modalClose {
+    position: absolute;
+    right: 25px;
+    top: 25px;
+    border: 0;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 20px;
+    color: #666;
+    transition: var(--transition);
+    font-weight: bold;
+  }
+
+  #modalClose:hover {
+    background: rgba(0, 0, 0, 0.2);
+    transform: rotate(90deg) scale(1.1);
+  }
+
+  #modalType {
+    font-weight: 900;
+    font-size: 14px;
+    padding: 10px 20px;
+    border-radius: 25px;
+    display: inline-block;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+  }
+
+  #modalQuestion {
+    font-weight: 800;
+    font-size: 24px;
+    margin: 25px 0;
+    line-height: 1.5;
+    color: #000000;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  #modalChoices {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 30px;
+  }
+
+  #modalChoices .choice {
+    background: white;
+    border: 3px solid rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    padding: 20px 25px;
+    cursor: pointer;
+    transition: var(--transition);
+    text-align: left;
+    font-size: 18px;
+    position: relative;
+    overflow: hidden;
+    color: #000000;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  #modalChoices .choice::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 5px;
+    height: 100%;
+    background: var(--accent);
+    transform: scaleY(0);
+    transition: transform 0.3s;
+  }
+
+  #modalChoices .choice:hover::before {
+    transform: scaleY(1);
+  }
+
+  #modalChoices .choice:hover {
+    background: rgba(255, 209, 102, 0.1);
+    transform: translateX(8px);
+    border-color: rgba(255, 209, 102, 0.4);
+    color: #000000;
+    box-shadow: 0 6px 20px rgba(255, 209, 102, 0.2);
+  }
+
+  #answerInfo {
+    margin-top: 25px;
+    padding: 20px;
+    border-radius: 15px;
+    font-weight: 700;
+    text-align: center;
+    display: none;
+    color: #000000;
+    font-size: 18px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.5s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  #answerInfo.correct {
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.15), rgba(76, 175, 80, 0.3));
+    color: #2e7d32;
+    border: 2px solid rgba(76, 175, 80, 0.4);
+    display: block;
+  }
+
+  #answerInfo.incorrect {
+    background: linear-gradient(135deg, rgba(244, 67, 54, 0.15), rgba(244, 67, 54, 0.3));
+    color: #d32f2f;
+    border: 2px solid rgba(244, 67, 54, 0.4);
+    display: block;
+  }
+
+  /* Enhanced Notification */
+  .notification {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    padding: 18px 25px;
+    background: linear-gradient(135deg, #1a76d2, #0d47a1);
+    border-radius: 15px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    transform: translateX(100px);
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1001;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    max-width: 400px;
+  }
+
+  .notification.show {
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  .notification-icon {
+    font-size: 24px;
+  }
+
+  .notification-text {
+    font-weight: 600;
+    font-size: 16px;
+    color: white;
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .app {
+      padding: 20px;
+    }
+    
+    header {
+      flex-direction: column;
+      gap: 20px;
+      align-items: stretch;
+    }
+    
+    .players {
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    }
+    
+    .card-row {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    :root {
+      --card-width: 160px;
+      --card-height: 220px;
+    }
+    
+    h1 {
+      font-size: 24px;
+    }
+    
+    .status {
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    .status-info {
+      justify-content: center;
+      text-align: center;
+    }
+    
+    .card-row {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+    
+    footer {
+      flex-direction: column;
+      gap: 20px;
+      text-align: center;
+    }
+    
+    .modal-content {
+      padding: 25px;
+      margin: 15px;
+    }
+    
+    #modalQuestion {
+      font-size: 20px;
+    }
+    
+    #modalChoices .choice {
+      padding: 16px 20px;
+      font-size: 16px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    :root {
+      --card-width: 140px;
+      --card-height: 200px;
+    }
+    
+    .card-row {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    
+    .players {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .modal-content {
+      padding: 20px;
+    }
+    
+    #modalQuestion {
+      font-size: 18px;
+    }
+    
+    #modalChoices .choice {
+      padding: 14px 18px;
+      font-size: 15px;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="title">
+      <div class="logo"></div>
+      <div class="title-text">
+        <h1>Ethics Card War — Enhanced Demo</h1>
+        <p class="lead">
+          <i class="fas fa-users"></i> 8 Players • 
+          <i class="fas fa-cards"></i> 6 Cards Each • 
+          <i class="fas fa-random"></i> Random Deck per Player
+        </p>
+      </div>
+    </div>
+    <div class="controls">
+      <button id="reset" class="btn btn-warning">
+        <i class="fas fa-redo"></i> Reset Game
+      </button>
+    </div>
+  </header>
+
+  <main class="board">
+    <div class="status">
+      <div class="status-info">
+        <div class="status-item">
+          <div class="status-label"><i class="fas fa-user"></i> Current Player</div>
+          <div id="currentPlayer" class="status-value">Player 1</div>
+        </div>
+        <div class="status-item">
+          <div class="status-label"><i class="fas fa-flag"></i> Round</div>
+          <div id="round" class="status-value">1</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Players Scoreboard -->
+    <div class="players" id="playersWrap"></div>
+
+    <!-- Card Row -->
+    <div class="card-row" id="cardRow">
+      <!-- Cards will be inserted by JavaScript -->
+    </div>
+
+    <footer>
+      <div class="tip">
+        <i class="fas fa-lightbulb"></i>
+        Each player gets 6 random cards. Choose 1 card to answer ethics questions and earn points!
+      </div>
+      <div class="version">
+        <i class="fas fa-code"></i>
+        Google Sites Embed • v2.2 Enhanced
+      </div>
+    </footer>
+  </main>
+</div>
+
+<!-- Quiz Modal -->
+<div id="quizModal">
+  <div class="modal-content">
+    <button id="modalClose">✕</button>
+    <div id="modalType" style="display:none;"></div>
+    <div id="modalQuestion"></div>
+    <div id="modalChoices"></div>
+    <div id="answerInfo"></div>
+  </div>
+</div>
+
+<!-- Notification -->
+<div id="notification" class="notification">
+  <div class="notification-icon" id="notificationIcon">🎮</div>
+  <div class="notification-text" id="notificationText"></div>
+</div>
+
+<script>
+/* ========== Enhanced Config ========== */
+const NUM_PLAYERS = 8;
+const INITIAL_CARDS = 6;
+const MAX_ROUND = 5;
+const QUESTION_COOLDOWN = 4;
+const POINTS = { easy: 1, medium: 2, bonus: 3 };
+
+/* ========== GAMBAR KARTU YANG DIPERBAIKI ========== */
+const CARD_IMAGES = { 
+  easy: 'assets/cards/easy.png', 
+  medium: 'assets/cards/medium.png', 
+  bonus: 'assets/cards/bonus.png' 
+};
+
+// Fallback images jika gambar utama tidak tersedia
+const FALLBACK_IMAGES = {
+  easy: 'https://via.placeholder.com/180x250/1a76d2/ffffff?text=EASY+CARD&font-size=16',
+  medium: 'https://via.placeholder.com/180x250/ff8a00/ffffff?text=MEDIUM+CARD&font-size=16',
+  bonus: 'https://via.placeholder.com/180x250/9c27b0/ffffff?text=BONUS+CARD&font-size=16'
+};
+
+/* ========== Enhanced State ========== */
+let state = {
+  scores: new Array(NUM_PLAYERS).fill(0),
+  currentPlayer: 0,
+  round: 1,
+  playerHasPicked: false,
+  playersDoneThisRound: 0
+};
+
+let questionHistory = {
+  easy: [],
+  medium: [],
+  bonus: []
+};
+
+/* ========== UI Elements ========== */
+const playersWrap = document.getElementById('playersWrap');
+const cardRow = document.getElementById('cardRow');
+const currentPlayerText = document.getElementById('currentPlayer');
+const roundText = document.getElementById('round');
+const resetBtn = document.getElementById('reset');
+
+/* ========== Enhanced Render Functions ========== */
+function renderPlayers() {
+  playersWrap.innerHTML = '';
+  for (let i = 0; i < NUM_PLAYERS; i++) {
+    const div = document.createElement('div');
+    div.className = 'player' + (i === state.currentPlayer ? ' active' : '');
+    div.innerHTML = `
+      <div class="name">
+        <i class="fas fa-user-circle"></i> Player ${i + 1}
+      </div>
+      <div class="score" id="score-${i}">${state.scores[i]}</div>
+    `;
+    playersWrap.appendChild(div);
+  }
+  currentPlayerText.textContent = `Player ${state.currentPlayer + 1}`;
+  roundText.textContent = state.round;
+}
+
+/* ========== Enhanced Deck Creation ========== */
+function makeDeck() {
+  cardRow.innerHTML = '';
+  state.playerHasPicked = false;
+
+  const deckTypes = ['easy', 'easy', 'easy', 'medium', 'medium', 'bonus'];
+  deckTypes.sort(() => Math.random() - 0.5);
+
+  deckTypes.forEach(type => {
+    const c = document.createElement('div');
+    c.className = `card ${type}`;
+    c.dataset.cardType = type;
+
+    c.innerHTML = `
+      <div class="card-inner">
+        <div class="face front">
+          <div class="front-subtext">Click to reveal</div>
+        </div>
+        <div class="face back"></div>
+      </div>
+      <div class="sparkles"></div>
+    `;
+
+    c.addEventListener('click', cardClicked);
+    cardRow.appendChild(c);
+  });
+}
+
+/* ========== Enhanced Card Click Handler ========== */
+function cardClicked(e) {
+  const card = e.currentTarget;
+  
+  if (state.playerHasPicked || card.classList.contains('used') || 
+      card.classList.contains('busy') || card.classList.contains('revealed')) {
+    return;
+  }
+  
+  card.classList.add('busy');
+  state.playerHasPicked = true;
+  
+  const type = card.dataset.cardType;
+  const backFace = card.querySelector('.face.back');
+  
+  // Tambahkan overlay untuk kontras label
+  const overlay = document.createElement('div');
+  overlay.className = 'card-label-overlay';
+  backFace.appendChild(overlay);
+  
+  // Add label to back face
+  const label = document.createElement('div');
+  label.className = 'card-label';
+  label.textContent = type.toUpperCase();
+  backFace.appendChild(label);
+  
+  // Add holo effect for bonus cards
+  if (type === 'bonus') {
+    const holo = document.createElement('div');
+    holo.className = 'holo';
+    backFace.appendChild(holo);
+    createSparkles(card.querySelector('.sparkles'));
+  }
+  
+  // Load image dengan teknik yang lebih baik
+  const img = new Image();
+  img.onload = function() {
+    // Atur gambar sebagai background dengan object-fit style
+    backFace.style.backgroundImage = `url('${CARD_IMAGES[type]}')`;
+    backFace.style.backgroundSize = 'cover'; // Agar gambar menutupi seluruh kartu
+    backFace.style.backgroundPosition = 'center'; // Pusatkan gambar
+    backFace.style.backgroundRepeat = 'no-repeat'; // Jangan ulang gambar
+    
+    setTimeout(() => {
+      card.classList.add('revealed');
+      card.classList.remove('busy');
+      
+      setTimeout(() => {
+        const qObj = getQuestion(type);
+        showQuizModal(qObj, type, card);
+      }, 1500);
+      
+    }, 800);
+  };
+  
+  img.onerror = function() {
+    console.log(`Gambar ${type} tidak ditemukan, menggunakan fallback`);
+    
+    // Gunakan fallback image
+    backFace.style.backgroundImage = `url('${FALLBACK_IMAGES[type]}')`;
+    backFace.style.backgroundSize = 'cover';
+    backFace.style.backgroundPosition = 'center';
+    
+    setTimeout(() => {
+      card.classList.add('revealed');
+      card.classList.remove('busy');
+      
+      setTimeout(() => {
+        const qObj = getQuestion(type);
+        showQuizModal(qObj, type, card);
+      }, 1500);
+    }, 800);
+  };
+  
+  // Coba load gambar utama dulu
+  img.src = CARD_IMAGES[type];
+}
+
+/* ========== Question Logic ========== */
+function getQuestion(type) {
+  const available = QUESTIONS[type].filter((_, idx) => {
+    const record = questionHistory[type].find(q => q.index === idx);
+    return !record || (state.round - record.round) >= QUESTION_COOLDOWN;
+  });
+
+  const pool = available.length ? available : QUESTIONS[type];
+  const index = Math.floor(Math.random() * pool.length);
+  const questionIndex = QUESTIONS[type].indexOf(pool[index]);
+
+  questionHistory[type] = questionHistory[type]
+    .filter(q => (state.round - q.round) < QUESTION_COOLDOWN);
+
+  questionHistory[type].push({
+    index: questionIndex,
+    round: state.round
+  });
+
+  return pool[index];
+}
+
+/* ========== Enhanced Modal Handling ========== */
+const quizModal = document.getElementById('quizModal');
+const modalQuestion = document.getElementById('modalQuestion');
+const modalChoices = document.getElementById('modalChoices');
+const modalType = document.getElementById('modalType');
+const modalClose = document.getElementById('modalClose');
+let modalCurrent = { card: null, type: null, qObj: null };
+
+function showQuizModal(qObj, type, cardEl) {
+  modalCurrent.card = cardEl;
+  modalCurrent.type = type;
+  modalCurrent.qObj = qObj;
+  
+  modalType.textContent = type.toUpperCase();
+  modalType.style.display = 'block';
+  modalType.style.background = type === 'easy' ? 'linear-gradient(135deg, var(--easy-color), #0b62a7)' :
+                               type === 'medium' ? 'linear-gradient(135deg, var(--medium-color), #f08a1f)' :
+                               'linear-gradient(135deg, var(--bonus-color), #8b5cf6)';
+  
+  modalQuestion.textContent = qObj.q;
+  modalChoices.innerHTML = '';
+  answerInfo.className = '';
+  answerInfo.textContent = '';
+  answerInfo.style.display = 'none';
+  
+  qObj.choices.forEach((cText, i) => {
+    const label = String.fromCharCode(65 + i);
+    const btn = document.createElement('button');
+    btn.className = 'choice';
+    btn.innerHTML = `<strong>${label}.</strong> ${cText}`;
+    btn.addEventListener('click', () => modalChoiceClicked(i));
+    modalChoices.appendChild(btn);
+  });
+  
+  quizModal.style.display = 'flex';
+}
+
+function closeQuizModal() {
+  quizModal.style.display = 'none';
+  modalChoices.innerHTML = '';
+  modalQuestion.textContent = '';
+  modalType.textContent = '';
+  modalType.style.display = 'none';
+  modalCurrent = { card: null, type: null, qObj: null };
+}
+
+function modalChoiceClicked(choiceIndex) {
+  const { card, type, qObj } = modalCurrent;
+  
+  Array.from(modalChoices.children).forEach(btn => btn.disabled = true);
+  
+  const correctIndex = qObj.a;
+  const isCorrect = (choiceIndex === correctIndex);
+  const player = state.currentPlayer;
+  
+  // Show correct answer
+  modalChoices.children[correctIndex].style.background =
+    'linear-gradient(135deg, var(--success), #45a049)';
+  modalChoices.children[correctIndex].style.color = 'white';
+  
+  // Show feedback
+  answerInfo.style.display = 'block';
+  
+  if (isCorrect) {
+    state.scores[player] += POINTS[type];
+    document.getElementById(`score-${player}`).textContent = state.scores[player];
+    
+    answerInfo.textContent = `✅ Correct! Player ${player + 1} earned ${POINTS[type]} points`;
+    answerInfo.className = 'correct';
+    
+    showNotification(
+      `Player ${player + 1} answered correctly! +${POINTS[type]} points`,
+      '🏆'
+    );
+  } else {
+    modalChoices.children[choiceIndex].style.background =
+      'linear-gradient(135deg, var(--error), #d32f2f)';
+    modalChoices.children[choiceIndex].style.color = 'white';
+    
+    answerInfo.textContent = `❌ Incorrect. The correct answer was: ${qObj.choices[correctIndex]}`;
+    answerInfo.className = 'incorrect';
+    
+    showNotification(
+      `Player ${player + 1} answered incorrectly`,
+      '❌'
+    );
+  }
+  
+  card.classList.add('used');
+  
+  setTimeout(() => {
+    closeQuizModal();
+    
+    state.playersDoneThisRound++;
+    
+    if (state.playersDoneThisRound >= NUM_PLAYERS) {
+      if (state.round >= MAX_ROUND) {
+        endGame();
+        return;
+      }
+      
+      state.round++;
+      state.playersDoneThisRound = 0;
+      roundText.textContent = state.round;
+      showNotification(`Round ${state.round} begins!`, '🚀');
+    }
+    
+    state.currentPlayer = (state.currentPlayer + 1) % NUM_PLAYERS;
+    
+    renderPlayers();
+    makeDeck();
+    
+    showNotification(
+      `Player ${state.currentPlayer + 1}'s turn`,
+      '🎮'
+    );
+    
+  }, 2000);
+}
+
+modalClose.addEventListener('click', closeQuizModal);
+
+/* ========== Enhanced End Game ========== */
+function endGame() {
+  const results = state.scores
+    .map((score, i) => ({ player: i + 1, score }))
+    .sort((a, b) => b.score - a.score);
+  
+  let html = `
+    <div style="text-align:center;margin-bottom:25px;">
+      <div style="font-size:40px;margin-bottom:10px;">🏆</div>
+      <h2 style="color:#000;margin-bottom:20px;">Game Over - Final Results</h2>
+    </div>
+    <div style="background:linear-gradient(135deg,#f5f5f5,#e0e0e0);padding:25px;border-radius:15px;margin-bottom:25px;box-shadow:0 8px 25px rgba(0,0,0,0.1);">
+      <div style="display:flex;align-items:center;justify-content:center;gap:30px;margin-bottom:20px;">
+        <div style="text-align:center;">
+          <div style="font-size:24px;">🥇</div>
+          <div style="font-size:20px;font-weight:900;color:#000;">Player ${results[0].player}</div>
+          <div style="font-size:28px;font-weight:900;color:#1a76d2;">${results[0].score}</div>
+          <div style="font-size:12px;color:#666;">points</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:24px;">🥈</div>
+          <div style="font-size:18px;font-weight:800;color:#000;">Player ${results[1].player}</div>
+          <div style="font-size:24px;font-weight:900;color:#ff8a00;">${results[1].score}</div>
+          <div style="font-size:12px;color:#666;">points</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:24px;">🥉</div>
+          <div style="font-size:18px;font-weight:800;color:#000;">Player ${results[2].player}</div>
+          <div style="font-size:24px;font-weight:900;color:#9c27b0;">${results[2].score}</div>
+          <div style="font-size:12px;color:#666;">points</div>
+        </div>
+      </div>
+    </div>
+    <div style="background:#f8f9fa;padding:20px;border-radius:12px;">
+      <h3 style="color:#000;margin-bottom:15px;">All Scores</h3>
+  `;
+  
+  results.forEach((r, i) => {
+    html += `<div style="display:flex;justify-content:space-between;padding:12px;border-bottom:1px solid #eee;color:#333;">
+      <div><strong>${i + 1}.</strong> Player ${r.player}</div>
+      <div><strong>${r.score}</strong> points</div>
+    </div>`;
+  });
+  
+  html += `</div>`;
+  
+  modalQuestion.innerHTML = html;
+  modalChoices.innerHTML = `
+    <button class="choice" onclick="location.reload()" style="background:var(--info);color:white;border:none;text-align:center;">
+      <i class="fas fa-redo"></i> Play Again
+    </button>
+  `;
+  modalType.style.display = 'none';
+  answerInfo.style.display = 'none';
+  
+  quizModal.style.display = 'flex';
+}
+
+/* ========== Sparkles Effect ========== */
+function createSparkles(container) {
+  container.innerHTML = '';
+  const count = 15;
+  for (let i = 0; i < count; i++) {
+    const s = document.createElement('i');
+    s.style.left = (5 + Math.random() * 90) + '%';
+    s.style.top = (5 + Math.random() * 90) + '%';
+    s.style.animationDelay = (Math.random() * 0.5) + 's';
+    s.style.width = (6 + Math.random() * 10) + 'px';
+    s.style.height = s.style.width;
+    container.appendChild(s);
+  }
+}
+
+/* ========== Enhanced Notification System ========== */
+function showNotification(text, icon = '🎮') {
+  const notification = document.getElementById('notification');
+  const notificationText = document.getElementById('notificationText');
+  const notificationIcon = document.getElementById('notificationIcon');
+  
+  notificationText.textContent = text;
+  notificationIcon.textContent = icon;
+  notificationIcon.className = 'notification-icon';
+  
+  // Add specific icon classes based on notification type
+  if (icon.includes('✅') || icon.includes('🏆')) {
+    notification.style.background = 'linear-gradient(135deg, var(--success), #45a049)';
+  } else if (icon.includes('❌')) {
+    notification.style.background = 'linear-gradient(135deg, var(--error), #d32f2f)';
+  } else if (icon.includes('🎮')) {
+    notification.style.background = 'linear-gradient(135deg, #1a76d2, #0d47a1)';
+  }
+  
+  notification.classList.add('show');
+  
+  setTimeout(() => {
+    notification.classList.remove('show');
+  }, 3000);
+}
+
+/* ========== Enhanced Questions ========== */
+const QUESTIONS = {
+  easy: [
+    { q: "Apa yang dimaksud dengan etika profesi?", choices: ["Aturan hukum pemerintah", "Pedoman perilaku moral dalam pekerjaan", "Kebiasaan kerja perusahaan", "Sikap pribadi di luar pekerjaan"], a: 1 },
+    { q: "Profesi dapat diartikan sebagai…", choices: ["Aktivitas bebas siapa saja", "Pekerjaan tanpa standar", "Pekerjaan dengan keahlian dan tanggung jawab khusus", "Pekerjaan untuk upah"], a: 2 },
+    { q: "Filsafat etika membahas tentang…", choices: ["Teknologi modern", "Penilaian baik dan buruk tindakan", "Seni komunikasi", "Sejarah hukum"], a: 1 },
+    { q: "Kode etik profesi berfungsi untuk…", choices: ["Menentukan gaji", "Mengatur jam kerja", "Menjaga perilaku profesional", "Meningkatkan keuntungan"], a: 2 },
+    { q: "Contoh profesi di bidang TI adalah…", choices: ["Sales", "Wirausaha", "Akuntan", "Analis sistem"], a: 3 },
+    { q: "Etika profesi diperlukan terutama saat…", choices: ["Menjalankan tugas profesional", "Berada di rumah", "Bersosialisasi", "Mengikuti hobi"], a: 0 },
+    { q: "Profesionalisme ditunjukkan melalui…", choices: ["Kepatuhan pada kode etik", "Bekerja tanpa aturan", "Menghindari tanggung jawab", "Bekerja seenaknya"], a: 0 },
+    { q: "Kode etik profesi biasanya dibuat oleh…", choices: ["Asosiasi profesi", "Pemerintah daerah", "Individu pekerja", "Media massa"], a: 0 },
+    { q: "Tujuan utama etika profesi adalah…", choices: ["Meningkatkan citra profesi", "Mengurangi beban kerja", "Menambah penghasilan", "Menghilangkan konflik"], a: 0 },
+    { q: "Seorang profesional seharusnya bersikap…", choices: ["Tanggung jawab", "Acuh tak acuh", "Bebas aturan", "Menghindari kewajiban"], a: 0 }
+  ],
+
+  medium: [
+    { q: "Etika profesi bertujuan menjaga…", choices: ["Kepentingan pribadi", "Integritas dan kualitas layanan", "Kecepatan kerja", "Stabilitas harga"], a: 1 },
+    { q: "Netiquette berkaitan dengan…", choices: ["Pemrograman web", "Desain grafis", "Etika komunikasi di dunia maya", "Keamanan jaringan"], a: 2 },
+    { q: "Utilitarianisme menilai tindakan berdasarkan…", choices: ["Hak individu", "Aturan tertulis", "Manfaat terbesar bagi banyak orang", "Niat pelaku"], a: 2 },
+    { q: "Menjaga kerahasiaan data adalah kewajiban karena…", choices: ["Menghindari audit", "Mengurangi biaya", "Melindungi privasi pengguna", "Mempercepat kerja"], a: 2 },
+    { q: "Phishing termasuk cybercrime karena…", choices: ["Merusak perangkat", "Mencuri data secara manipulatif", "Mengubah sistem", "Memperlambat jaringan"], a: 1 },
+    { q: "Pelanggaran etika profesi TI dapat menyebabkan…", choices: ["Kerugian pengguna", "Inovasi meningkat", "Efisiensi sistem", "Produktivitas naik"], a: 0 },
+    { q: "UU ITE mengatur mengenai…", choices: ["Aktivitas elektronik", "Kegiatan offline", "Hukum pidana umum", "Hubungan industrial"], a: 0 },
+    { q: "Mengakses data tanpa izin termasuk…", choices: ["Pelanggaran etika", "Kesalahan teknis", "Risiko kecil", "Prosedur biasa"], a: 0 },
+    { q: "Etika profesi bersifat preventif karena…", choices: ["Mencegah pelanggaran", "Memberi sanksi", "Menghukum pelaku", "Mengurangi inovasi"], a: 0 },
+    { q: "Profesional TI harus netral karena…", choices: ["Berhadapan dengan data sensitif", "Bekerja tim", "Teknologi kompleks", "Target perusahaan"], a: 0 }
+  ],
+
+  bonus: [
+    { q: "Developer menggunakan software bajakan di kantor. Dampaknya adalah…", choices: ["Efisiensi biaya", "Risiko kecil", "Masalah teknis", "Pelanggaran etika dan HAKI"], a: 3 },
+    { q: "Tidak melaporkan celah keamanan klien melanggar prinsip…", choices: ["Utilitarianisme", "Non-maleficence", "Netiquette", "Kepatuhan"], a: 1 },
+    { q: "Ethical dilemma terjadi ketika profesional harus memilih antara…", choices: ["Teknologi lama dan baru", "Biaya dan waktu", "Nilai etika dan tekanan bisnis", "Tim dan individu"], a: 2 },
+    { q: "Mengambil data pengguna tanpa persetujuan tetap salah karena…", choices: ["Data dianonimkan", "Melanggar prinsip privasi", "Tidak dipublikasikan", "Untuk riset internal"], a: 1 },
+    { q: "Ethical hacking dilakukan jika…", choices: ["Sekadar pembuktian", "Tanpa sepengetahuan pemilik", "Untuk uji coba bebas", "Ada izin resmi dan tujuan keamanan"], a: 3 },
+    { q: "Menyebarkan hoaks yang merugikan publik melanggar…", choices: ["Etika dan hukum", "Netiquette saja", "Kebijakan internal", "Aturan komunitas"], a: 0 },
+    { q: "Mengubah data laporan atas perintah atasan adalah…", choices: ["Tidak etis meskipun diperintah", "Tanggung jawab bawahan", "Keputusan manajemen", "Risiko kerja"], a: 0 },
+    { q: "HAKI penting dalam TI karena…", choices: ["Melindungi karya digital", "Menghambat kolaborasi", "Meningkatkan biaya", "Mengurangi inovasi"], a: 0 },
+    { q: "Profesional TI wajib menolak jika…", choices: ["Diminta melanggar etika", "Target tinggi", "Deadline ketat", "Proyek besar"], a: 0 },
+    { q: "Keputusan etis harus mempertimbangkan…", choices: ["Dampak sosial dan hukum", "Keuntungan bisnis", "Tekanan pasar", "Waktu pengerjaan"], a: 0 }
+  ]
+};
+
+/* ========== Initialize Game ========== */
+resetBtn.addEventListener('click', () => {
+  if (!confirm('Reset game? All scores will be lost.')) return;
+  
+  closeQuizModal();
+  
+  state.scores = new Array(NUM_PLAYERS).fill(0);
+  state.currentPlayer = 0;
+  state.round = 1;
+  state.playerHasPicked = false;
+  state.playersDoneThisRound = 0;
+  
+  questionHistory = {
+    easy: [],
+    medium: [],
+    bonus: []
+  };
+  
+  makeDeck();
+  renderPlayers();
+  
+  showNotification('Game reset! Player 1 starts with 6 new cards.', '🔄');
+});
+
+function init() {
+  makeDeck();
+  renderPlayers();
+  showNotification('Game started! Player 1, choose your first card.', '🎮');
+}
+
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
